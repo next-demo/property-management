@@ -2,6 +2,8 @@ package com.property.services;
 
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import com.property.payload.OwnerDto;
 
 
@@ -15,4 +17,6 @@ public interface OwnerService {
 	List<OwnerDto> getAllOwners();
 	
 	void deleteOwner(Integer customerId);
+
+	OwnerDto loadUserByUsername(String username) throws UsernameNotFoundException;
 }

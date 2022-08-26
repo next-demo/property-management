@@ -5,11 +5,14 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.property.repository.OwnerRepo;
 import com.property.repository.RoleRepo;
+import com.property.models.Customer;
 import com.property.models.Owner;
 import com.property.models.Role;
 import com.property.config.AppConstants;
@@ -88,6 +91,14 @@ public class OwnerServiceImpl implements OwnerService {
 		this.OwnerRepo.delete(owner);
 
 	}
+	
+	@Override
+	public OwnerDto loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		Owner owner = this.OwnerRepo.findBycontactdetail(username).orElseThrow(()-> new ResourceNotFoundException("Owner", "contactDetail", username));
+		
+		return this.modelMapper.map(owner, OwnerDto.class) ;
+	}
 
 //	
 	private Owner dtoToOwner(OwnerDto ownerDto) {
@@ -105,5 +116,6 @@ public class OwnerServiceImpl implements OwnerService {
 		OwnerDto customerDto = this.modelMapper.map(owner, OwnerDto.class);
 		return customerDto;
 	}
+	
 
 }

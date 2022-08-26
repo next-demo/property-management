@@ -73,6 +73,12 @@ public class OwnerController {
 		
 	}	
 	
+	//Get -user get
+	@GetMapping("/{contactdetail}")
+	public ResponseEntity<OwnerDto> loadUserByUsername(@PathVariable String contactdetail){
+		return ResponseEntity.ok(this.OwnerService.loadUserByUsername(contactdetail));
+			
+	}	
 	
 }
 

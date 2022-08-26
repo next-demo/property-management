@@ -1,7 +1,9 @@
 package com.property.config;
 
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.FilterChain;
@@ -11,6 +13,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +31,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import com.fasterxml.classmate.Filter;
 import com.property.security.CustomUserDetailService;
 import com.property.security.JwtAuthenticationEntryPoint;
 import com.property.security.JwtAuthenticationFilter;
@@ -64,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable().authorizeHttpRequests().antMatchers("/api/v1/auth/register").permitAll()
 		.antMatchers("/api/v1/auth/login").permitAll()
 		.antMatchers("/api/v1/auth/loginOwner").permitAll()
-		.antMatchers("/api/v1/auth/Ownerregister").permitAll()
+		.antMatchers("/api/owner/").permitAll()
 		.antMatchers("/api/properties").permitAll()
 		.antMatchers("/api/customers/63").permitAll()
 		.antMatchers(HttpMethod.POST).permitAll()
@@ -80,17 +87,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 	
-	
-//	@Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("*"));
-//        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-//        configuration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return (CorsConfigurationSource) source;
-//    }
+	@Component
+	public class CORSFilter implements Filter {
+
+	    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+	        HttpServletResponse response = (HttpServletResponse) res;
+	        response.setHeader("Access-Control-Allow-Origin", "*");
+	        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+	        response.setHeader("Access-Control-Max-Age", "3600");
+	        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	        chain.doFilter(req, res);
+	    }
+
+	    public void init(FilterConfig filterConfig) {}
+
+	    public void destroy() {}
+
+		@Override
+		public boolean include(Object element) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+	}
 }
 	
 	

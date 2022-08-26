@@ -1,5 +1,7 @@
 package com.property.controllers;
 
+import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,7 +81,7 @@ public class AuthController {
 	// register new user api
 
 	@PostMapping("/register")
-	public ResponseEntity<CustomerDto> registerUser(@RequestBody CustomerDto customerDto) {
+	public ResponseEntity<CustomerDto> registerUser(@Valid @RequestBody CustomerDto customerDto) {
 		CustomerDto registeredCustomer = this.customerService.registerNewCustomer( customerDto);
 
 		return new ResponseEntity<CustomerDto>(registeredCustomer, HttpStatus.CREATED);
