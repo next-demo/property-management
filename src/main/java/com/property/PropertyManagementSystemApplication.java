@@ -34,7 +34,7 @@ public class PropertyManagementSystemApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		System.out.println(this.passwordEncoder.encode("anant"));
+		System.out.println(this.passwordEncoder.encode("ron123"));
 		try {
 			Role role1 = new Role();
 			role1.setId(AppConstants.ADMIN_USER);

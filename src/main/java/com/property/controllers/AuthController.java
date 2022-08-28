@@ -66,6 +66,11 @@ public class AuthController {
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
 				password);
+		
+		System.out.println(username);
+		System.out.println(password);
+		System.out.println(authenticationToken);
+		
 
 		try {
 

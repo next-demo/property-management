@@ -52,6 +52,7 @@ public class Customer implements UserDetails  {
 	@Column(name = "Customer_name", nullable = false, length = 100)
 	private String name;
 	
+	@Column(unique = true)
 	private String contactdetail;
 	private String password;
 

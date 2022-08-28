@@ -47,6 +47,8 @@ public class Owner implements UserDetails {
 	
 	@Column(name = "Owner_name" , nullable = false, length = 100)
 	private String name;
+
+	@Column(unique = true)
 	private String contactdetail;
 	private String password;
 	

@@ -50,7 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		customer.setName(customerDto.getName());
 		customer.setContactdetail(customerDto.getContactdetail());
-		customer.setPassword(customerDto.getPassword());
+		customer.setPassword(this.passwordEncoder.encode(customerDto.getPassword()));
 		
 		
 		Customer updatedCustomer = this.customerRepo.save(customer);

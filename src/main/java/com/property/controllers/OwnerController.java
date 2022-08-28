@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.property.models.Customer;
@@ -45,8 +46,8 @@ public class OwnerController {
 	
 	
 	//PUT -update user
-	
-	@PutMapping("/{OwnerId}")
+	@CrossOrigin
+	@RequestMapping(method = RequestMethod.PUT, path = "/{OwnerId}")
 	public ResponseEntity<OwnerDto> updateOwner(@Valid @RequestBody OwnerDto OwnerDto,@PathVariable Integer OwnerId){
 		
 		OwnerDto updatedOwner =	this.OwnerService.updateOwner(OwnerDto, OwnerId);
@@ -74,8 +75,9 @@ public class OwnerController {
 	}	
 	
 	//Get -user get
-	@GetMapping("/{contactdetail}")
-	public ResponseEntity<OwnerDto> loadUserByUsername(@PathVariable String contactdetail){
+	@CrossOrigin
+	@RequestMapping(method = RequestMethod.GET, path = "/login/{contactdetail}")
+	public ResponseEntity<OwnerDto> loadOwner(@PathVariable String contactdetail){
 		return ResponseEntity.ok(this.OwnerService.loadUserByUsername(contactdetail));
 			
 	}	
