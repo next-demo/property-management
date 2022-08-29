@@ -37,6 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerDto createCustomer(CustomerDto customerDto) {
 		Customer cust = this.modelMapper.map(customerDto, Customer.class);
+		cust.setPassword(this.passwordEncoder.encode(cust.getPassword()));
 		Customer addedCus = this.customerRepo.save(cust);
 		return this.modelMapper.map(addedCus, CustomerDto.class);
 	}
@@ -117,13 +118,14 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setPassword(this.passwordEncoder.encode(customer.getPassword()));
 		System.out.println(customer.getPassword());
 		
-		//roles
-		Role role = this.roleRepo.findById(AppConstants.CUSTOMER_USER).get();
-		
-		customer.getRoles().add(role);
+//		//roles
+//		Role role = this.roleRepo.findById(AppConstants.CUSTOMER_USER).get();
+//		
+//		customer.getRoles().add(role);
 		
 		Customer newCustomer = this.customerRepo.save(customer);
-
+		System.out.println(newCustomer.getName());
+		System.out.println(newCustomer.getContactdetail());
 		return this.modelMapper.map(newCustomer, CustomerDto.class);
 	}
 

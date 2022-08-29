@@ -36,8 +36,6 @@ import lombok.Setter;
 
 
 
-
-
 @Entity
 @Table(name = "Customers")
 @NoArgsConstructor
@@ -60,6 +58,7 @@ public class Customer implements UserDetails  {
 	private List<PropertyDetails> property = new ArrayList<>();
 	
 	@ManyToOne
+	@JoinColumn(name="Owner_id")
 	private Owner owner;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

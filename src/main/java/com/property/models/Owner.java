@@ -54,6 +54,9 @@ public class Owner implements UserDetails {
 	
 	@OneToMany(mappedBy = "owner", cascade =CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<PropertyDetails> property = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "owner", cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+	private List<Customer> customer = new ArrayList<>();
 
 	@Override
 	public String getUsername() {

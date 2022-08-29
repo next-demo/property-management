@@ -43,7 +43,8 @@ public class OwnerServiceImpl implements OwnerService {
 //		// encoded the password
 //		Owner.setPassword(this.passwordEncoder.encode(Owner.getPassword()));
 
-
+		System.out.println(Owner.getName());
+		System.out.println(Owner.getOwnerId());;
 		Owner savedOwner = this.OwnerRepo.save(Owner);
 		return this.ownerToDto(savedOwner);
 	}
@@ -69,6 +70,7 @@ public class OwnerServiceImpl implements OwnerService {
 
 		Owner owner = this.OwnerRepo.findById(ownerId)
 				.orElseThrow(() -> new ResourceNotFoundException("Owner", "ownerId", ownerId));
+//		Owner.setPassword(this.passwordEncoder.de(Owner.getPassword()));
 		return this.ownerToDto(owner);
 	}
 

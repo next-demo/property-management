@@ -35,6 +35,8 @@ public class CustomerDto {
 	@Size(min  = 3 , max = 10 , message = "Password must be min of 3 chars and max of 10")
 	private String password;	
 	
+	private OwnerDto owner ;
+	
 	private Set<RoleDto> role = new HashSet<>();
 	
 //	@JsonIgnore

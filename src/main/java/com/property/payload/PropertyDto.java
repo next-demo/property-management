@@ -40,7 +40,7 @@ public class PropertyDto {
 	
 	private LocalityDto locality;
 	
-	private Customer customer;
+	private CustomerDto customer;
 	
 	
 	

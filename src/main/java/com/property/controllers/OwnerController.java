@@ -62,7 +62,8 @@ public class OwnerController {
 	}
  
 	//Get -user get
-	@GetMapping("/")
+	@CrossOrigin
+	@RequestMapping(method = RequestMethod.GET, path = "/list")
 	public ResponseEntity<List<OwnerDto>> getAllOwners(){
 		return ResponseEntity.ok(this.OwnerService.getAllOwners());
 	}
