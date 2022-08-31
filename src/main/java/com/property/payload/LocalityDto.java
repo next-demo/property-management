@@ -20,4 +20,5 @@ public class LocalityDto {
 	@NotEmpty
 	private String landmark; 
 
+	private OwnerDto owner ;
 }

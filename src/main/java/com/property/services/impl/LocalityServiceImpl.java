@@ -12,6 +12,7 @@ import com.property.models.LocalityDetails;
 import com.property.models.Owner;
 import com.property.payload.LocalityDto;
 import com.property.repository.LocalityRepo;
+import com.property.repository.OwnerRepo;
 import com.property.services.LocalityServices;
 
 
@@ -22,14 +23,20 @@ public class LocalityServiceImpl implements LocalityServices{
 	@Autowired
 	private LocalityRepo localityRepo;
 	
+	@Autowired
+	private OwnerRepo ownerRepo;
+	
 
 	@Autowired
 	private ModelMapper modelmapper;
 	
 
 	@Override
-	public LocalityDto createLocality(LocalityDto localityDto) {
+	public LocalityDto createLocality(LocalityDto localityDto,Integer ownerId) {
+
+		Owner owner = this.ownerRepo.findById(ownerId).orElseThrow(()-> new ResourceNotFoundException("Owner","Owner id", ownerId)); 
 		LocalityDetails location = this.modelmapper.map(localityDto,LocalityDetails.class);
+		location.setOwner(owner);
 		LocalityDetails addedlocation = this.localityRepo.save(location);
 		return this.modelmapper.map(addedlocation, LocalityDto.class);
 		

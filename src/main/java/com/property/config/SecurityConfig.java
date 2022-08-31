@@ -76,7 +76,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/api/owner/**").permitAll()
 		.antMatchers("/api/owner/").permitAll()
 		.antMatchers("/api/properties").permitAll()
+		.antMatchers("/api/locality/**").permitAll()
 		.antMatchers("/api/customers/**").permitAll()
+		.antMatchers("/api/property/image/upload/**").permitAll()
 		.antMatchers(HttpMethod.POST).permitAll()
 		.antMatchers(HttpMethod.GET).permitAll().
 		antMatchers(HttpMethod.PUT).permitAll().anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(this.jwtAuthenticationEntryPoint).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

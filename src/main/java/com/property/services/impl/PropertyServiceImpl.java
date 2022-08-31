@@ -12,11 +12,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.property.exceptions.ResourceNotFoundException;
+import com.property.models.Customer;
 import com.property.models.LocalityDetails;
 import com.property.models.Owner;
 import com.property.models.PropertyDetails;
 import com.property.payload.PropertyDto;
 import com.property.payload.PropertyResponse;
+import com.property.repository.CustomerRepo;
 import com.property.repository.LocalityRepo;
 import com.property.repository.OwnerRepo;
 import com.property.repository.PropertyRepo;
@@ -32,6 +34,9 @@ public class PropertyServiceImpl implements PropertyService {
 	private ModelMapper modelMapper;
 	@Autowired
 	private OwnerRepo ownerRepo;
+	
+	@Autowired
+	private CustomerRepo customerRepo;
 	@Autowired
 	private LocalityRepo localityRepo;
 	
@@ -47,6 +52,18 @@ public class PropertyServiceImpl implements PropertyService {
 	    PropertyDetails newProperty= this.propertyRepo.save(property);
 		return this.modelMapper.map(newProperty,PropertyDto.class);
 	}
+	 
+	@Override
+	public PropertyDto bookProperty(Integer propertyId,Integer customerId) {
+		Customer customer = this.customerRepo.findById(customerId).orElseThrow(()-> new ResourceNotFoundException("Customer","Id",customerId));
+	
+		PropertyDetails property=	this.propertyRepo.findById(propertyId).orElseThrow(()-> new ResourceNotFoundException("PropertyDetails","id", propertyId));
+		customer.setOwner(property.getOwner());
+		property.setCustomer(customer);
+		PropertyDetails newProperty= this.propertyRepo.save(property);
+		return this.modelMapper.map(newProperty,PropertyDto.class);
+		
+	}
 
 	@Override
 	public PropertyDto updateProperty(PropertyDto propertyDto, Integer id) {
@@ -60,6 +77,13 @@ public class PropertyServiceImpl implements PropertyService {
 	property.setImageName(propertyDto.getImageName());
 	property.setPropertyage(propertyDto.getPropertyage());
 	property.setTotalfloor(propertyDto.getTotalfloor());
+	property.setPlotArea(propertyDto.getPlotArea());
+	property.setPricePerSqft(propertyDto.getPricePerSqft());
+	property.setPrice(propertyDto.getPrice());
+	property.setAvailableFrom(propertyDto.getAvailableFrom());
+	property.setPostedOn(propertyDto.getPostedOn());
+	property.setDimensions(propertyDto.getDimensions());
+	property.setDescription(propertyDto.getDescription());
 	
    PropertyDetails updatedproperty= this.propertyRepo.save(property);
 		return this.modelMapper.map(updatedproperty,PropertyDto.class);
@@ -118,6 +142,15 @@ public class PropertyServiceImpl implements PropertyService {
 		Owner owner= this.ownerRepo.findById(ownerId).orElseThrow(()-> new ResourceNotFoundException("Owner","ownerId", ownerId));
 		
 		List<PropertyDetails> properties=this.propertyRepo.findByOwner(owner);
+		List<PropertyDto> propertyDtos=	properties.stream().map((property)-> this.modelMapper.map(property,PropertyDto.class )).collect(Collectors.toList());
+		return propertyDtos;
+	}
+	
+	@Override
+	public List<PropertyDto> getPropertyByCustomer(Integer customerId){
+		
+		Customer customer = this.customerRepo.findById(customerId).orElseThrow(()-> new ResourceNotFoundException("Customer","Id",customerId));
+		List<PropertyDetails> properties=this.propertyRepo.findByCustomer(customer);
 		List<PropertyDto> propertyDtos=	properties.stream().map((property)-> this.modelMapper.map(property,PropertyDto.class )).collect(Collectors.toList());
 		return propertyDtos;
 	}

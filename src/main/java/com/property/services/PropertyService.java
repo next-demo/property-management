@@ -13,6 +13,8 @@ public interface PropertyService {
 	// update 
 	PropertyDto updateProperty(PropertyDto property , Integer id);
 	
+	//Book property
+	PropertyDto bookProperty(Integer propertyId,Integer customerId);
 	
 	// get by id 
 	PropertyDto getPropertyById(Integer id);
@@ -30,6 +32,10 @@ public interface PropertyService {
 	// get post by owner 
 	
 	List<PropertyDto> getPropertyByOwner(Integer ownerId);
+	
+	// get post by owner 
+	
+		List<PropertyDto> getPropertyByCustomer(Integer customerId);
 	
 	// search property 
 	

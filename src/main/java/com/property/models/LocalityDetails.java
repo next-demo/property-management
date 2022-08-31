@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -42,7 +44,9 @@ public class LocalityDetails {
 	@OneToMany(mappedBy = "locality", cascade =CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<PropertyDetails> property = new ArrayList<>();
 
-
+	@ManyToOne
+	@JoinColumn(name="Owner_id")
+	private Owner owner;
 
 	
 

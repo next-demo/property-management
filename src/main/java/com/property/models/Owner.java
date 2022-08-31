@@ -56,6 +56,9 @@ public class Owner implements UserDetails {
 	private List<PropertyDetails> property = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "owner", cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+	private List<LocalityDetails> locality = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "owner", cascade =CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<Customer> customer = new ArrayList<>();
 
 	@Override

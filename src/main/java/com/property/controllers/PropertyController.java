@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,6 +57,15 @@ public class PropertyController {
 		PropertyDto createProperty = this.propertyService.createProperty(propertyDto, ownerId, locationId);
 		return new ResponseEntity<PropertyDto>(createProperty, HttpStatus.CREATED);
 	}
+	
+	//Book Property
+	@PostMapping("/customer/{customerId}/property/{propertyId}")
+	public ResponseEntity<PropertyDto> bookProperty(@PathVariable Integer customerId, @PathVariable Integer propertyId){
+		PropertyDto BookedProperty = this.propertyService.bookProperty(propertyId, customerId);
+
+		return new ResponseEntity<PropertyDto>(BookedProperty, HttpStatus.OK);
+		
+	}
 
 	// get by owner
 	@GetMapping("/owner/{ownerId}/properties")
@@ -64,6 +74,13 @@ public class PropertyController {
 
 		return new ResponseEntity<List<PropertyDto>>(properties, HttpStatus.OK);
 	}
+	// get by customer
+		@GetMapping("/customer/{customerId}/properties")
+		public ResponseEntity<List<PropertyDto>> getPropertyByCustomer(@PathVariable Integer customerId) {
+			List<PropertyDto> properties = this.propertyService.getPropertyByCustomer(customerId);
+
+			return new ResponseEntity<List<PropertyDto>>(properties, HttpStatus.OK);
+		}
 
 	// get by Locality
 	@GetMapping("/locality/{locationId}/properties")
@@ -122,7 +139,8 @@ public class PropertyController {
 	}
 
 	// property image upload
-	@PostMapping("/property/image/upload/{id}")
+	@CrossOrigin
+	@RequestMapping(method = RequestMethod.POST, path = "/property/image/upload/{id}")
 	public ResponseEntity<PropertyDto> uploadPostImage(@RequestParam("image") MultipartFile image,
 			@PathVariable Integer id) throws IOException {
          PropertyDto propertyDto = this.propertyService.getPropertyById(id);

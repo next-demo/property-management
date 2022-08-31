@@ -1,5 +1,7 @@
 package com.property.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,6 +51,15 @@ public class PropertyDetails {
 	
 	@Column(name="build_up_area")
     private int builduparea;
+	
+	private String plotArea;
+	private long pricePerSqft;
+	private String price;
+	
+	private Date availableFrom ;
+	private Date postedOn;
+	private String dimensions ;
+	private String description;
 	
 	@ManyToOne
 	@JoinColumn(name="Owner_id")

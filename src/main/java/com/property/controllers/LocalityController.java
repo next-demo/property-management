@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,16 +24,17 @@ import com.property.services.LocalityServices;
 
 @RestController
 @RequestMapping("/api/locality")
+@CrossOrigin(origins="*")
 public class LocalityController {
 
 	@Autowired
 	private LocalityServices localityServices;
 
 	// POST-create property
-	@PostMapping("/")
-	public ResponseEntity<LocalityDto> createProperty(@Valid @RequestBody LocalityDto propertyDto) {
+	@PostMapping("/owner/{ownerId}")
+	public ResponseEntity<LocalityDto> createProperty(@Valid @RequestBody LocalityDto propertyDto, @PathVariable Integer ownerId) {
 
-		LocalityDto createPropertyDto = this.localityServices.createLocality(propertyDto);
+		LocalityDto createPropertyDto = this.localityServices.createLocality(propertyDto , ownerId);
 		return new ResponseEntity<>(createPropertyDto, HttpStatus.CREATED);
 	}
 

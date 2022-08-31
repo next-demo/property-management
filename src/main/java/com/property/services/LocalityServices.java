@@ -11,7 +11,7 @@ public interface LocalityServices {
 
 	
 	//create
-	LocalityDto createLocality(LocalityDto localityDto);
+	LocalityDto createLocality(LocalityDto localityDto ,Integer ownerId);
 	
 	//update
 	LocalityDto updateLocality(LocalityDto localityDto , Integer localionId);
