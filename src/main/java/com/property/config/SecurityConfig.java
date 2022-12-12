@@ -1,28 +1,14 @@
 package com.property.config;
 
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-
-import javax.annotation.security.PermitAll;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,23 +16,28 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-
-import com.fasterxml.classmate.Filter;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import com.property.security.CustomUserDetailService;
 import com.property.security.JwtAuthenticationEntryPoint;
 import com.property.security.JwtAuthenticationFilter;
 
-@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
+@EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig{
+
+	public static final String[] PUBLIC_URLS = {"/api/v1/auth/**","/api/v1/auth/register","/api/v1/auth/login","/api/owner/**", "/v3/api-docs",
+			"/api/properties/**","/api/locality/**","/api/locality/**","/api/property/image/upload/**"
+
+
+	};
 
 	@Autowired
 	private CustomUserDetailService customUserDetailService;
@@ -56,52 +47,90 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
-	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(this.customUserDetailService).passwordEncoder(passwordEncoder());
 		
 	}
-	
+
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+		http.
+				csrf()
+				.disable()
+				.authorizeHttpRequests()
+				.antMatchers(PUBLIC_URLS)
+				.permitAll()
+				.antMatchers(HttpMethod.POST)
+				.permitAll()
+				.antMatchers(HttpMethod.GET)
+				.permitAll()
+				.anyRequest()
+				.authenticated()
+				.and().exceptionHandling()
+				.authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
+				.and()
+				.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+		http.authenticationProvider(daoAuthenticationProvider());
+		DefaultSecurityFilterChain defaultSecurityFilterChain = http.build();
+
+		return defaultSecurityFilterChain;
+
+
+	}
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().authorizeHttpRequests().antMatchers("/api/v1/auth/register").permitAll()
-		.antMatchers("/api/v1/auth/login").permitAll()
-		.antMatchers("/api/v1/auth/loginOwner").permitAll()
-		.antMatchers("/api/owner/**").permitAll()
-		.antMatchers("/api/owner/").permitAll()
-		.antMatchers("/api/properties").permitAll()
-		.antMatchers("/api/locality/**").permitAll()
-		.antMatchers("/api/customers/**").permitAll()
-		.antMatchers("/api/property/image/upload/**").permitAll()
-		.antMatchers(HttpMethod.POST).permitAll()
-		.antMatchers(HttpMethod.GET).permitAll().
-		antMatchers(HttpMethod.PUT).permitAll().anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(this.jwtAuthenticationEntryPoint).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
-		http.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-	}
-	
-	
 	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
+	public DaoAuthenticationProvider daoAuthenticationProvider() {
+
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(this.customUserDetailService);
+		provider.setPasswordEncoder(passwordEncoder());
+		return provider;
+
 	}
-//	
-//	@Bean
-//	CorsConfigurationSource corsConfigurationSource() {
-//		CorsConfiguration configuration = new CorsConfiguration();
-//		configuration.setAllowedOrigins(Arrays.asList("https://example.com"));
-//		configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", configuration);
-//		return source;
-//	}
+
+
+	@Bean
+	public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration configuration) throws Exception {
+		return configuration.getAuthenticationManager();
+	}
+
+
+	@Bean
+	public FilterRegistrationBean coresFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+		CorsConfiguration corsConfiguration = new CorsConfiguration();
+		corsConfiguration.setAllowCredentials(true);
+		corsConfiguration.addAllowedOriginPattern("*");
+		corsConfiguration.addAllowedHeader("Authorization");
+		corsConfiguration.addAllowedHeader("Content-Type");
+		corsConfiguration.addAllowedHeader("Accept");
+		corsConfiguration.addAllowedMethod("POST");
+		corsConfiguration.addAllowedMethod("GET");
+		corsConfiguration.addAllowedMethod("DELETE");
+		corsConfiguration.addAllowedMethod("PUT");
+		corsConfiguration.addAllowedMethod("OPTIONS");
+		corsConfiguration.setMaxAge(3600L);
+
+		source.registerCorsConfiguration("/**", corsConfiguration);
+
+		FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+
+		bean.setOrder(-110);
+
+		return bean;
+	}
 	
 
 	
