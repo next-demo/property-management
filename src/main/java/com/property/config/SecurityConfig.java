@@ -34,7 +34,10 @@ import com.property.security.JwtAuthenticationFilter;
 public class SecurityConfig{
 
 	public static final String[] PUBLIC_URLS = {"/api/v1/auth/**","/api/v1/auth/register","/api/v1/auth/login","/api/owner/**", "/v3/api-docs",
-			"/api/properties/**","/api/locality/**","/api/locality/**","/api/property/image/upload/**"
+			"/api/properties/**","/api/locality/**","/api/locality/**","/api/property/image/upload/**","/v3/api-docs",
+			"/swagger-resources/**",
+			"/swagger-ui/**",
+			"/webjars/**"
 
 
 	};
@@ -59,12 +62,9 @@ public class SecurityConfig{
 				csrf()
 				.disable()
 				.authorizeHttpRequests()
-				.antMatchers(PUBLIC_URLS)
-				.permitAll()
-				.antMatchers(HttpMethod.POST)
-				.permitAll()
-				.antMatchers(HttpMethod.GET)
-				.permitAll()
+				.antMatchers(PUBLIC_URLS).permitAll()
+				.antMatchers(HttpMethod.POST).permitAll()
+				.antMatchers(HttpMethod.GET).permitAll()
 				.anyRequest()
 				.authenticated()
 				.and().exceptionHandling()

@@ -24,12 +24,8 @@ public class Role {
 	
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	private String name;
-	
-	 @ManyToMany(mappedBy = "roles", cascade = { CascadeType.ALL })
-	    private Set<Customer> customer = new HashSet<Customer>();
 	
 }

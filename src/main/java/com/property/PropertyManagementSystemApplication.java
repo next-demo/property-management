@@ -38,11 +38,11 @@ public class PropertyManagementSystemApplication implements CommandLineRunner {
 		try {
 			Role role1 = new Role();
 			role1.setId(AppConstants.ADMIN_USER);
-			role1.setName("ADMIN_USER");
+			role1.setName("ROLE_ADMIN");
 			
 			Role role2 = new Role();
 			role2.setId(AppConstants.CUSTOMER_USER);
-			role2.setName("NORMAL_USER");
+			role2.setName("ROLE_NORMAL");
 			
 //			Role role3 = new Role();
 //			role3.setId(AppConstants.CUSTOMER_USER);
